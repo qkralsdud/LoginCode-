@@ -1,8 +1,15 @@
 package com.cos.blogapp.web;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -36,7 +43,8 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
-	public String login(LoginReqDto dto) {
+	public String login(@Valid LoginReqDto dto, 
+			BindingResult bindingResult, Model model) {
 		
 		// 1. username, password 받기
 		System.out.println(dto.getUsername());
@@ -45,29 +53,36 @@ public class UserController {
 		// 2. DB - > 조회
 		User userEntity = userRepository.mLogin(dto.getUsername(), dto.getPassword());
 		
-		if(userEntity.getUsername() == null || 
-			userEntity.getPassword() == null ||
-			!userEntity.getUsername().equals("") ||
-			!userEntity.getPassword().equals("")
-			) {
-			return "redirect:/loginForm";
+		if(bindingResult.hasErrors()) {
+			Map<String, String> errorMap = new HashMap<>();
+			for(FieldError error : bindingResult.getFieldErrors()) {
+				errorMap.put(error.getField(), error.getDefaultMessage());
+				System.out.println("필드 : " + error.getField() );
+				System.out.println("메시지" + error.getDefaultMessage() );
+			}
+			model.addAttribute("errorMap", errorMap);
+			return "error/error";
 		} else {
 			session.setAttribute("principal", userEntity);
-			return "redirect:/home";
+			return "redirect:/";
 		}
 	}
 	
 	@PostMapping("/join")
-	public String join(JoinReqtDto dto) {// username=love&password=1234&email=love@nate.com
-				
-		if(dto.getUsername() == null || 
-			dto.getPassword() == null ||
-			dto.getEmail() == null ||
-			!dto.getPassword().equals("") ||
-			!dto.getEmail().equals("") 
-			
-			) {
-				return "error/error";
+	public String join(@Valid JoinReqtDto dto,
+			BindingResult bindingResult, Model model) {// 유효성검사시 터진것을 담아준다
+		
+		System.out.println("에러사이즈: "  + bindingResult.getFieldErrors().size());
+		
+		if(bindingResult.hasErrors()) {
+			Map<String, String> errorMap = new HashMap<>();
+			for(FieldError error : bindingResult.getFieldErrors()) {
+				errorMap.put(error.getField(), error.getDefaultMessage());
+				System.out.println("필드 : " + error.getField() );
+				System.out.println("메시지" + error.getDefaultMessage() );
+			}
+			model.addAttribute("errorMap", errorMap);
+			return "error/error";
 		}
 		
 		userRepository.save(dto.toEntity());		
