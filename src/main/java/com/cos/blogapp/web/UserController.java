@@ -22,8 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Controller
-public class UserController {
-	
+public class UserController {	
 	private final UserRepository userRepository;	
 	private final HttpSession session;
 	
@@ -46,13 +45,6 @@ public class UserController {
 	public String login(@Valid LoginReqDto dto, 
 			BindingResult bindingResult, Model model) {
 		
-		// 1. username, password 받기
-		System.out.println(dto.getUsername());
-		System.out.println(dto.getPassword());
-		
-		// 2. DB - > 조회
-		User userEntity = userRepository.mLogin(dto.getUsername(), dto.getPassword());
-		
 		if(bindingResult.hasErrors()) {
 			Map<String, String> errorMap = new HashMap<>();
 			for(FieldError error : bindingResult.getFieldErrors()) {
@@ -61,10 +53,20 @@ public class UserController {
 				System.out.println("메시지" + error.getDefaultMessage() );
 			}
 			model.addAttribute("errorMap", errorMap);
-			return "error/error";
+			return "error/error"; 
+		} 
+		
+		// 1. username, password 받기
+		System.out.println(dto.getUsername());
+		System.out.println(dto.getPassword());		
+		// 2. DB - > 조회
+		User userEntity = userRepository.mLogin(dto.getUsername(), dto.getPassword());
+		
+		if(userEntity == null) {
+			return "redirect:/loginForm"; 
 		} else {
 			session.setAttribute("principal", userEntity);
-			return "redirect:/";
+			return "redirect:/";			
 		}
 	}
 	
