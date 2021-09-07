@@ -45,7 +45,11 @@ public class UserController {
 		// 2. DB - > 조회
 		User userEntity = userRepository.mLogin(dto.getUsername(), dto.getPassword());
 		
-		if(userEntity == null) {
+		if(userEntity.getUsername() == null || 
+			userEntity.getPassword() == null ||
+			!userEntity.getUsername().equals("") ||
+			!userEntity.getPassword().equals("")
+			) {
 			return "redirect:/loginForm";
 		} else {
 			session.setAttribute("principal", userEntity);
