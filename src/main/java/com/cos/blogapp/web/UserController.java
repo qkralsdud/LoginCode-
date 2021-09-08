@@ -45,16 +45,13 @@ public class UserController {
 	
 	@PostMapping("/login")
 	public @ResponseBody String login(@Valid LoginReqDto dto, 
-			BindingResult bindingResult, Model model) {
+			BindingResult bindingResult) {
 		
 		if(bindingResult.hasErrors()) {
 			Map<String, String> errorMap = new HashMap<>();
 			for(FieldError error : bindingResult.getFieldErrors()) {
 				errorMap.put(error.getField(), error.getDefaultMessage());
-				System.out.println("필드 : " + error.getField() );
-				System.out.println("메시지" + error.getDefaultMessage() );
 			}
-			model.addAttribute("errorMap", errorMap);
 			return Script.back(errorMap.toString()); 
 		} 
 		
@@ -70,21 +67,13 @@ public class UserController {
 	
 	@PostMapping("/join")
 	public @ResponseBody String join(@Valid JoinReqtDto dto,
-			BindingResult bindingResult, Model model) {// 유효성검사시 터진것을 담아준다
-		
-		// 1. 유효성검사 실패 - 자바스크립트 응답(경고창, 뒤로가기)
-		// 2. 정상 - 로그인 페이지
-		
-		//System.out.println("에러사이즈: "  + bindingResult.getFieldErrors().size());
-		
+			BindingResult bindingResult) {// 유효성검사시 터진것을 담아준다
+				
 		if(bindingResult.hasErrors()) {
 			Map<String, String> errorMap = new HashMap<>();
 			for(FieldError error : bindingResult.getFieldErrors()) {
 				errorMap.put(error.getField(), error.getDefaultMessage());
-				System.out.println("필드 : " + error.getField() );
-				System.out.println("메시지" + error.getDefaultMessage() );
 			}
-			model.addAttribute("errorMap", errorMap);
 			return Script.back(errorMap.toString());
 		}
 		
