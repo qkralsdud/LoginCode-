@@ -4,6 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.cos.blogapp.domain.user.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +22,11 @@ public class Board {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id; // PK
 	private String title;
-	private String cont; 
+	private String content; 
+	
+	@JoinColumn(name = "userId")
+	@ManyToOne
+	private User user;
 }
 
 
