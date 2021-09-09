@@ -1,7 +1,8 @@
 package com.cos.blogapp.web;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +18,18 @@ public class BoardController {
 	// final을 붙으면 무조건 초기화를 해야함
 	private final BoardRepository boardRepository;
 	
-	@GetMapping({"/", "/board"})
-	public String home(Model model) {//Model == request.setAttribute
+	@GetMapping( "/board")
+	public String home(Model model, int page) {//Model == request.setAttribute
+		
+		PageRequest pageRequest = PageRequest.of(page, 3, 
+				Sort.by(Sort.Direction.DESC, "id"));
+		
 		// 영속화된 오브젝트
-		List<Board> boardsEntity = boardRepository.findAll();
+		Page<Board> boardsEntity = 
+				boardRepository.findAll(pageRequest);
 		model.addAttribute("boardsEntity", boardsEntity);
 		//System.out.println(boardsEntity.get(0).getUser().getUsername());
-		return "home";
+		return "board/list";
 	}
 }
 
