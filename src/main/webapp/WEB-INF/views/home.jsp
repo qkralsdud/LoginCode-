@@ -5,11 +5,12 @@
 
 <div class="container">
 
-	<c:forEach begin="0" end="2">
+	<c:forEach var = "board"  items="${boardsEntity }">
 		<!-- 카드글 시작 -->
 		<div class="card">
 			<div class="card-body">
-				<h4 class="card-title">Title 부분입니다</h4>
+			<!-- el표현식은 변수명을 적으면 자동으로 get함수를 호출해준다 -->
+				<h4 class="card-title">${board.title}</h4>
 				<a href="#" class="btn btn-primary">상세보기</a>
 			</div>
 		</div>
