@@ -3,7 +3,7 @@ package com.cos.blogapp.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class SHA256 {
+public class SHA {
 
 	public static  String encrypt(String rawPassword, MyAlgorithm algorithm)  {
 		// getInstance() = new를 한것을 계속 쓰라고(메모리에 떠있는거 사용)

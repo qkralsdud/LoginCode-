@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.junit.jupiter.api.Test;
 
-public class SHA256Test {
+public class SHATest {
 
 	@Test
 	public void encrypt() {
