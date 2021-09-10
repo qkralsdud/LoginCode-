@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cos.blogapp.domain.user.User;
 import com.cos.blogapp.domain.user.UserRepository;
+import com.cos.blogapp.util.MyAlgorithm;
+import com.cos.blogapp.util.SHA256;
 import com.cos.blogapp.util.Script;
 import com.cos.blogapp.web.dto.JoinReqtDto;
 import com.cos.blogapp.web.dto.LoginReqDto;
@@ -50,7 +52,9 @@ public class UserController {
 			return Script.back(errorMap.toString()); 
 		} 
 		
-		User userEntity = userRepository.mLogin(dto.getUsername(), dto.getPassword());
+		String encPassword = SHA256.encrypt(dto.getPassword(), MyAlgorithm.SHA256);
+		
+		User userEntity = userRepository.mLogin(dto.getUsername(), encPassword);
 		
 		if(userEntity == null) {
 			return Script.back("아이디 혹은 비밀번호를 잘못 입력하였습니다.");
@@ -72,6 +76,9 @@ public class UserController {
 			return Script.back(errorMap.toString());
 		}
 		
+		String encPassword = SHA256.encrypt(dto.getPassword(), MyAlgorithm.SHA256);
+		
+		dto.setPassword(encPassword);
 		userRepository.save(dto.toEntity());		
 		return Script.href("/loginForm"); // 리다이렉션(300)
 	}
