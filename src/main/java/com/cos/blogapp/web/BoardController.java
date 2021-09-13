@@ -50,7 +50,6 @@ public class BoardController {
 			return Script.back(errorMap.toString());
 		}
 		
-		
 		boardRepository.save(dto.toEntity(principal));		
 		return Script.href("/", "글쓰기 완료");
 	}
