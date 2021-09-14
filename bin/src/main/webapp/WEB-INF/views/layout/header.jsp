@@ -15,13 +15,6 @@
 	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<link
-	href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"
-	rel="stylesheet">
-<script
-	src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-
 </head>
 <body>
 
@@ -36,7 +29,7 @@
 			<ul class="navbar-nav">
 
 				<c:choose>
-					<c:when test="${empty sessionScope.principal}">
+					<c:when test="${empty sessionScope.principal} ">
 						<li class="nav-item"><a class="nav-link" href="/loginForm">로그인</a>
 						</li>
 
@@ -44,19 +37,16 @@
 						</li>
 					</c:when>
 					<c:otherwise>
-						<li class="nav-item"><a class="nav-link"
-							href="/board/saveForm">글쓰기</a></li>
+						<li class="nav-item"><a class="nav-link" href="/board/saveForm">글쓰기</a>
+						</li>
 
-						<li class="nav-item"><a class="nav-link"
-							href="/user/${sessionScope.principal.id}">회원정보</a></li>
-
+						<li class="nav-item"><a class="nav-link" href="/user/${sessionScope.principal.id}">회원정보</a>
+						</li>
+						
 						<li class="nav-item"><a class="nav-link" href="/logout">로그아웃</a>
 						</li>
 					</c:otherwise>
 				</c:choose>
-
-
-
 
 			</ul>
 		</div>
