@@ -54,7 +54,9 @@ public class UserController {
 		
 		
 		User userEntity = 
-				userRepository.mLogin(dto.getUsername(), SHA.encrypt(dto.getPassword(), MyAlgorithm.SHA256));
+				userRepository.mLogin(
+						dto.getUsername(), 
+						SHA.encrypt(dto.getPassword(), MyAlgorithm.SHA256));
 		
 		if(userEntity == null) {
 			return Script.back("아이디 혹은 비밀번호를 잘못 입력하였습니다.");
