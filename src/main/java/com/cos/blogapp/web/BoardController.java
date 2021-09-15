@@ -41,7 +41,15 @@ public class BoardController {
 	@GetMapping("/board/{id}")
 	public String detail(@PathVariable int id, Model model) {
 		// select * from board where id = :id
-		Board boardEntity = boardRepository.findById(id).get();
+		
+		//1. orElse board값을 리턴 없을때 ()안 값을 리턴
+//		Board boardEntity = boardRepository.findById(id)
+//				.orElse(null);
+		
+		// 2. orElseThrow
+		Board boardEntity = boardRepository.findById(id)
+				.orElseThrow();
+		
 		model.addAttribute("boardEntity", boardEntity);
 		return "board/detail";
 	}
