@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,11 +32,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor // final이 붙은 변수의 생성자를 만들어준다
 @Controller //컴포넌트(스프링) IoC
 public class BoardController {
-	
+		
 	//DI
 	// final을 붙으면 무조건 초기화를 해야함
 	private final BoardRepository boardRepository;
 	private final HttpSession session;
+	
+	@DeleteMapping("/board/{id}")
+	public @ResponseBody String deleteById(@PathVariable int id) {
+		boardRepository.deleteById(id);
+		return "ok";
+	}
 	
 	//쿼리스트링, 패스var -> 디비 where에 걸리는 친구들
 	//1. 컨트롤러 선정 2. Http Method 선정 3. 받을 데이터 있는디(body, 쿼리스트링, 패스var)
