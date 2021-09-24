@@ -2,7 +2,6 @@ package com.cos.blogapp.web;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -23,9 +22,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cos.blogapp.domain.board.Board;
 import com.cos.blogapp.domain.board.BoardRepository;
 import com.cos.blogapp.domain.user.User;
+import com.cos.blogapp.handler.ex.MyAsyncNotFoundException;
 import com.cos.blogapp.handler.ex.MyNotFoundException;
 import com.cos.blogapp.util.Script;
 import com.cos.blogapp.web.dto.BoardSaveReqDto;
+import com.cos.blogapp.web.dto.CMRespDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,9 +40,28 @@ public class BoardController {
 	private final HttpSession session;
 	
 	@DeleteMapping("/board/{id}")
-	public @ResponseBody String deleteById(@PathVariable int id) {
-		boardRepository.deleteById(id);
-		return "ok";
+	public @ResponseBody CMRespDto<String> deleteById(@PathVariable int id) {
+		
+		// 인증이 된 사람만 함수 접근 가능!! (로그인 된 사람)
+		User principal = (User) session.getAttribute("principal");
+		if(principal == null) {
+			throw new MyAsyncNotFoundException("인증이 안됨");
+		}
+		
+		// 권한이 있는 사람만 함수 접근 가능(principal.id == {id})
+		Board boardEntity = boardRepository.findById(id)
+				.orElseThrow( () ->  new MyAsyncNotFoundException(id + "를 찾을 수 없습니다") );
+		if(principal.getId() != boardEntity.getUser().getId()) {
+			throw new MyAsyncNotFoundException("해당 권한없음");
+		}
+		
+		try {
+			boardRepository.deleteById(id); // 오류발생(id가 없으면)			
+		} catch (Exception e) {
+			throw new MyAsyncNotFoundException(id+"를 찾을 수 없어서 삭제할 수 없어요.");
+		}
+		
+		return new CMRespDto<String>(1, "성공", null);
 	}
 	
 	//쿼리스트링, 패스var -> 디비 where에 걸리는 친구들
