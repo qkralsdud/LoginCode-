@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(value = MyAsyncNotFoundException.class)
 	public @ResponseBody CMRespDto<String> error2(MyAsyncNotFoundException e) {
 		System.out.println(e.getMessage());
-		return new CMRespDto<String> (-1, e.getMessage(),null);
+		return new CMRespDto<String> (-1, e.getMessage(), null);
 	}
 }
 
