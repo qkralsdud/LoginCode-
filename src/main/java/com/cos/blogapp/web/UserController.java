@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cos.blogapp.domain.board.Board;
 import com.cos.blogapp.domain.user.User;
 import com.cos.blogapp.domain.user.UserRepository;
 import com.cos.blogapp.handler.ex.MyAsyncNotFoundException;
@@ -28,6 +27,7 @@ import com.cos.blogapp.util.Script;
 import com.cos.blogapp.web.dto.CMRespDto;
 import com.cos.blogapp.web.dto.JoinReqtDto;
 import com.cos.blogapp.web.dto.LoginReqDto;
+import com.cos.blogapp.web.dto.UserUpdateDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,39 +38,38 @@ public class UserController {
 	private final HttpSession session;
 	
 	@PutMapping("/user/{id}")
-	public @ResponseBody CMRespDto<String> update(@PathVariable int id, @Valid @RequestBody JoinReqtDto dto, BindingResult bindingResult) {
-		// 인증
-		User principal = (User) session.getAttribute("principal");
-		if(principal == null) {
-			throw new MyAsyncNotFoundException("인증이 안됨");
-		}
-		
-		//권한
-		User userEntity = userRepository.findById(id)
-				.orElseThrow( () ->  new MyAsyncNotFoundException(id + "를 찾을 수 없습니다") );
-		if(principal.getId() != userEntity.getId()) {
-			throw new MyAsyncNotFoundException("해당 권한없음");
-		}
+	public @ResponseBody CMRespDto<String> update(@PathVariable int id, @Valid @RequestBody UserUpdateDto dto, BindingResult bindingResult) {
 		
 		// 유효성
-		if(bindingResult.hasErrors()) {
+		if(bindingResult.hasErrors()) {			
 			Map<String, String> errorMap = new HashMap<>();
 			for(FieldError error : bindingResult.getFieldErrors()) {
 				errorMap.put(error.getField(), error.getDefaultMessage());
 			}
-			//return Script.back(errorMap.toString());
 			throw new MyAsyncNotFoundException(errorMap.toString());
 		}
 		
-		String encPassword = SHA.encrypt(dto.getPassword(), MyAlgorithm.SHA256);
+		// 인증
+		User principal = (User) session.getAttribute("principal");
+		if(principal == null) {
+			throw new MyAsyncNotFoundException("인증 실패");
+		}
 		
-		dto.setPassword(encPassword);
-		userRepository.save(dto.toEntity());	
+		// 권한
+		if(principal.getId() != id) {
+			throw new MyAsyncNotFoundException("회원정보를 수정할 권한이 없습니다");
+		}
 		
-		return new CMRespDto<>(1, "업데이트 성공", null);
+		// 핵심로직
+		principal.setEmail(dto.getEmail());
+		session.setAttribute("principal", principal); // 세션 값 변경
+		
+		userRepository.save(principal);
+		
+		return new CMRespDto<>(1, "셩공", null);
 	}
 	
-	@GetMapping("/user/{id}/updateForm")
+	@GetMapping("/user/{id}")
 	public String userInfo(@PathVariable int id, Model model) {
 		
 		// 기본은 userRepository.findByid(id) 디비에서 가져와야함.

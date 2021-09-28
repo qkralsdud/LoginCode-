@@ -47,12 +47,12 @@ public class BoardController {
 		//인증
 		User principal = (User) session.getAttribute("principal");
 		if(principal == null) {
-			throw new MyAsyncNotFoundException("인증이 안됨");
+			throw new MyAsyncNotFoundException("인증 실패");
 		}
 		
 		//권한
 		Board boardEntity = boardRepository.findById(id)
-				.orElseThrow( () ->  new MyAsyncNotFoundException(id + "를 찾을 수 없습니다") );
+				.orElseThrow( () ->  new MyAsyncNotFoundException("해당 게시글을 찾을 수 없습니다") );
 		if(principal.getId() != boardEntity.getUser().getId()) {
 			throw new MyAsyncNotFoundException("해당 권한없음");
 		}
@@ -77,7 +77,7 @@ public class BoardController {
 		return new CMRespDto<>(1, "업데이트 성공", null);
 	}
 	
-	@GetMapping("/board/{id}/upadteForm")
+	@GetMapping("/board/{id}/updateForm")
 	public String boardupdateForm(@PathVariable int id, Model model) {
 		// 게시글 정보를 가지고 가야함
 		Board boardEntity = boardRepository.findById(id)
