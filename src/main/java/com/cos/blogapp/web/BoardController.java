@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cos.blogapp.domain.user.User;
 import com.cos.blogapp.handler.ex.MyAsyncNotFoundException;
-import com.cos.blogapp.handler.ex.MyNotFoundException;
 import com.cos.blogapp.service.BoardService;
 import com.cos.blogapp.service.CommentService;
 import com.cos.blogapp.util.Script;
@@ -40,27 +39,17 @@ public class BoardController {
 	private final BoardService boardService;
 	private final HttpSession session;
 	
-	@PostMapping("/board/{boardId}/comment")
+	@PostMapping("/api/board/{boardId}/comment")
 	public String commentSave(@PathVariable int boardId, CommentSaveReqDto dto) {		
 		User principal = (User) session.getAttribute("principal");
-		
-		if(principal == null) {
-			throw new MyNotFoundException("인증 실패");
-		}
-		
+				
 		commentService.댓글등록(boardId, dto, principal);
 		return "redirect:/board/"+boardId;
 	}
 	
-	@PutMapping("/board/{id}")
+	@PutMapping("/api/board/{id}")
 	public @ResponseBody CMRespDto<String> update(@PathVariable int id, @Valid @RequestBody BoardSaveReqDto dto, BindingResult bindingResult) {
-		
-		//인증
-		User principal = (User) session.getAttribute("principal");
-		if(principal == null) {
-			throw new MyAsyncNotFoundException("인증 실패");
-		}
-		
+				
 		//유효성
 		if(bindingResult.hasErrors()) {			
 			Map<String, String> errorMap = new HashMap<>();
@@ -70,29 +59,29 @@ public class BoardController {
 			//return Script.back(errorMap.toString());
 			throw new MyAsyncNotFoundException(errorMap.toString());
 		}
-		boardService.게시글수정(id, principal, dto);
 		
+		//인증
+		User principal = (User) session.getAttribute("principal");
+		
+		boardService.게시글수정(id, principal, dto);		
 		return new CMRespDto<>(1, "업데이트 성공", null);
 	}
 	
-	@GetMapping("/board/{id}/updateForm")
+	@GetMapping("/api/board/{id}/updateForm")
 	public String boardupdateForm(@PathVariable int id, Model model) {
 
-		// 게시글 정보를 가지고 가야함
-		
+		// 게시글 정보를 가지고 가야함		
 		model.addAttribute("boardEntity",  boardService.게시글수정페이지이동(id));	
 		return "board/updateForm";
 	}
 	
 	
-	@DeleteMapping("/board/{id}")
+	@DeleteMapping("/api/board/{id}")
 	public @ResponseBody CMRespDto<String> deleteById(@PathVariable int id) {
 		
 		// 인증이 된 사람만 함수 접근 가능!! (로그인 된 사람)
 		User principal = (User) session.getAttribute("principal");
-		if(principal == null) {
-			throw new MyAsyncNotFoundException("인증이 안됨");
-		}
+		
 		boardService.게시글삭제(id, principal);
 		return new CMRespDto<String>(1, "성공", null);
 	}
@@ -115,16 +104,12 @@ public class BoardController {
 		return "board/detail"; // viewResolver
 	}
 	
-	@PostMapping("/board")
+	@PostMapping("/api/board")
 	public @ResponseBody String save(@Valid BoardSaveReqDto dto, BindingResult bindingResult) {
 		
 		// 공통 로직 시작---------------------------
 		User principal = (User) session.getAttribute("principal");
 		
-		//인증체크
-		if(principal == null) {// 로그인 안됨
-			return Script.href("/loginForm", "잘못된 접근입니다.");
-		}
 		
 		if(bindingResult.hasErrors()) {			
 			Map<String, String> errorMap = new HashMap<>();

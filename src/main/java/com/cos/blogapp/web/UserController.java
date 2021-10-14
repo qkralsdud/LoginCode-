@@ -33,7 +33,7 @@ public class UserController {
 	private final UserService userService;
 	private final HttpSession session;
 	
-	@PutMapping("/user/{id}")
+	@PutMapping("/api/user/{id}")
 	public @ResponseBody CMRespDto<String> update(@PathVariable int id, @Valid @RequestBody UserUpdateDto dto, BindingResult bindingResult) {
 		
 		// 유효성
@@ -47,18 +47,12 @@ public class UserController {
 		
 		// 인증
 		User principal = (User) session.getAttribute("principal");
-		if(principal == null) {
-			throw new MyAsyncNotFoundException("인증 실패");
-		}
-		
+
 		// 권한
 		if(principal.getId() != id) {
 			throw new MyAsyncNotFoundException("회원정보를 수정할 권한이 없습니다");
 		}
 			
-		userService.회원수정(principal, dto);
-		
-
 		userService.회원수정(principal, dto);
 		
 		// 핵심로직
@@ -69,10 +63,8 @@ public class UserController {
 		return new CMRespDto<>(1, "셩공", null);
 	}
 	
-	@GetMapping("/user/{id}")
-	public String userInfo() {
-
-		
+	@GetMapping("/api/user/{id}")
+	public String userInfo() {		
 		// 기본은 userRepository.findByid(id) 디비에서 가져와야함.
 		
 		// 편법은 세션값을 가져올 수도 있다

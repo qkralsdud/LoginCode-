@@ -35,7 +35,7 @@
        
              
              // 3초
-             let response = await fetch("http://localhost:8080/board/"+id, {
+             let response = await fetch("http://localhost:8080/api/board/"+id, {
                 method: "put",
                 body: JSON.stringify(boardUpdateDto),
                 headers: {
@@ -51,7 +51,7 @@
              
              if(parseResponse.code == 1){
                 alert("업데이트 성공");
-                location.href="/board/"+id;
+                location.href="/api/board/"+id;
              }else{
                 alert("업데이트 실패: " + parseResponse.msg);
              }
