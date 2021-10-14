@@ -7,7 +7,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cos.blogapp.domain.user.User;
-import com.cos.blogapp.domain.user.UserRepository;
 import com.cos.blogapp.handler.ex.MyAsyncNotFoundException;
-import com.cos.blogapp.handler.ex.MyNotFoundException;
-import com.cos.blogapp.util.MyAlgorithm;
-import com.cos.blogapp.util.SHA;
+import com.cos.blogapp.service.UserService;
 import com.cos.blogapp.util.Script;
 import com.cos.blogapp.web.dto.CMRespDto;
 import com.cos.blogapp.web.dto.JoinReqtDto;
@@ -34,7 +30,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Controller
 public class UserController {	
-	private final UserRepository userRepository;	
+	
+	private final UserService userService;
 	private final HttpSession session;
 	
 	@PutMapping("/user/{id}")
@@ -60,26 +57,22 @@ public class UserController {
 			throw new MyAsyncNotFoundException("회원정보를 수정할 권한이 없습니다");
 		}
 		
+		userService.회원수정(principal, dto);
+		
 		// 핵심로직
 		principal.setEmail(dto.getEmail());
 		session.setAttribute("principal", principal); // 세션 값 변경
-		
-		userRepository.save(principal);
-		
+				
 		return new CMRespDto<>(1, "셩공", null);
 	}
 	
 	@GetMapping("/user/{id}")
-	public String userInfo(@PathVariable int id, Model model) {
+	public String userInfo() {
 		
 		// 기본은 userRepository.findByid(id) 디비에서 가져와야함.
-		User userEntity = userRepository.findById(id)
-				.orElseThrow(()-> new MyNotFoundException(id + "변호의 회원정보를 찾을 수 없습니다."));
 		
 		// 편법은 세션값을 가져올 수도 있다
-		
-		model.addAttribute("userEntity", userEntity);
-		
+				
 		return "user/updateForm";
 	}
 	
@@ -111,11 +104,7 @@ public class UserController {
 			return Script.back(errorMap.toString()); 
 		} 
 		
-		
-		User userEntity = 
-				userRepository.mLogin(
-						dto.getUsername(), 
-						SHA.encrypt(dto.getPassword(), MyAlgorithm.SHA256));
+		User userEntity = userService.로그인(dto);
 		
 		if(userEntity == null) {
 			return Script.back("아이디 혹은 비밀번호를 잘못 입력하였습니다.");
@@ -137,11 +126,7 @@ public class UserController {
 			}
 			return Script.back(errorMap.toString());
 		}
-		
-		String encPassword = SHA.encrypt(dto.getPassword(), MyAlgorithm.SHA256);
-		
-		dto.setPassword(encPassword);
-		userRepository.save(dto.toEntity());		
+		userService.회원가입(dto);
 		return Script.href("/loginForm"); // 리다이렉션(300)
 	}
 		
