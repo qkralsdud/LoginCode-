@@ -111,8 +111,6 @@
 				}
 			}
 		</script>
-
-		>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 	</div>
 	<br />
 </div>

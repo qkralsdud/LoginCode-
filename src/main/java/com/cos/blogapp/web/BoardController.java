@@ -20,13 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cos.blogapp.domain.user.User;
 import com.cos.blogapp.handler.ex.MyAsyncNotFoundException;
-<<<<<<< HEAD
-import com.cos.blogapp.service.BoardService;
-=======
 import com.cos.blogapp.handler.ex.MyNotFoundException;
 import com.cos.blogapp.service.BoardService;
 import com.cos.blogapp.service.CommentService;
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 import com.cos.blogapp.util.Script;
 import com.cos.blogapp.web.dto.BoardSaveReqDto;
 import com.cos.blogapp.web.dto.CMRespDto;
@@ -40,26 +36,8 @@ public class BoardController {
 		
 	//DI
 	// final을 붙으면 무조건 초기화를 해야함
-	private final  BoardService boardservice;
-<<<<<<< HEAD
-	private final HttpSession session;
-	
-	@PostMapping("/board/{boardId}/comment")
-	public String commentSave(@PathVariable int boardId, CommentSaveReqDto dto) {
-
-		// 1. DTO로 데이터 받기
-
-		// 2. Comment객체 만들기(빈객체 생성)
-
-		// 3. Comment 객체에 값 추가하기 id:X, content : DTO값, user:세션값, board:boardId로 findById
-		User principal = (User) session.getAttribute("principal");
-
-		boardservice.댓글등록(boardId, dto, principal);
-		return "redirect:/board/"+boardId;
-	}
-
-=======
 	private final CommentService commentService;
+	private final BoardService boardService;
 	private final HttpSession session;
 	
 	@PostMapping("/board/{boardId}/comment")
@@ -73,7 +51,6 @@ public class BoardController {
 		commentService.댓글등록(boardId, dto, principal);
 		return "redirect:/board/"+boardId;
 	}
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 	
 	@PutMapping("/board/{id}")
 	public @ResponseBody CMRespDto<String> update(@PathVariable int id, @Valid @RequestBody BoardSaveReqDto dto, BindingResult bindingResult) {
@@ -93,27 +70,17 @@ public class BoardController {
 			//return Script.back(errorMap.toString());
 			throw new MyAsyncNotFoundException(errorMap.toString());
 		}
-<<<<<<< HEAD
-			
-=======
-		
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
-		boardservice.게시글수정(id, principal, dto);
+		boardService.게시글수정(id, principal, dto);
 		
 		return new CMRespDto<>(1, "업데이트 성공", null);
 	}
 	
 	@GetMapping("/board/{id}/updateForm")
 	public String boardupdateForm(@PathVariable int id, Model model) {
-<<<<<<< HEAD
+
 		// 게시글 정보를 가지고 가야함
 		
-		model.addAttribute("boardEntity",  boardservice.게시글수정페이지이동(id));
-=======
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
-		
-		model.addAttribute("boardEntity", boardservice.게시글수정페이지이동(id));
-	
+		model.addAttribute("boardEntity",  boardService.게시글수정페이지이동(id));	
 		return "board/updateForm";
 	}
 	
@@ -126,13 +93,7 @@ public class BoardController {
 		if(principal == null) {
 			throw new MyAsyncNotFoundException("인증이 안됨");
 		}
-<<<<<<< HEAD
-		
-		// 권한이 있는 사람만 함수 접근 가능(principal.id == {id})
-=======
-		 
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
-		boardservice.게시글삭제(id, principal);
+		boardService.게시글삭제(id, principal);
 		return new CMRespDto<String>(1, "성공", null);
 	}
 	
@@ -141,7 +102,6 @@ public class BoardController {
 	// 4. 디비에 접근을 해야되면 Model 접근하기 or Model에 접근할 필요가 없다.
 	@GetMapping("/board/{id}")
 	public String detail(@PathVariable int id, Model model) {
-<<<<<<< HEAD
 		// select * from board where id = :id
 		
 		//1. orElse board값을 리턴 없을때 ()안 값을 리턴
@@ -150,13 +110,9 @@ public class BoardController {
 		
 		// 2. orElseThrow
 		
-		model.addAttribute("boardEntity", boardservice.게시글상세보기(id));
-		return "board/detail";
-=======
 		// Board 객체에 존재하는것 (Board O, User O,  List<Comment> X)
-		model.addAttribute("boardEntity", boardservice.게시글상세보기(id));
+		model.addAttribute("boardEntity", boardService.게시글상세보기(id));
 		return "board/detail"; // viewResolver
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 	}
 	
 	@PostMapping("/board")
@@ -180,13 +136,9 @@ public class BoardController {
 		// 공통 로직 끝---------------------------
 		
 		//핵심 로직시작---------------------------
-		boardservice.게시글등록(dto, principal);
+		boardService.게시글등록(dto, principal);
 		//핵심 로직끝---------------------------
 		
-<<<<<<< HEAD
-		boardservice.게시글등록(dto, principal);
-=======
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 		return Script.href("/", "글쓰기 완료");
 	}
 	
@@ -196,17 +148,11 @@ public class BoardController {
 	}
 	
 	@GetMapping( "/board")
-<<<<<<< HEAD
 	public String home(Model model, int page) {//Model == request.setAttribute	
 		// 영속화된 오브젝트
 
-		model.addAttribute("boardsEntity", boardservice.게시글목록보기(page));
+		model.addAttribute("boardsEntity", boardService.게시글목록보기(page));
 		//System.out.println(boardsEntity.get(0).getUser().getUsername());
-=======
-	public String home(Model model, int page) {//Model == request.setAttribute
-
-		model.addAttribute("boardsEntity", boardservice.게시글목록보기(page));
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 		return "board/list";
 	}
 }

@@ -12,10 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-<<<<<<< HEAD
-=======
+
 import javax.persistence.OrderBy;
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
+
 
 import com.cos.blogapp.domain.comment.Comment;
 import com.cos.blogapp.domain.user.User;
@@ -49,14 +48,8 @@ public class Board {
 	// mappedBy 에는 FK의 주인의 변수이름을 추가한다
 	@JsonIgnoreProperties({"board"}) // comment객체 내부의 필드를 제외시키는 방법
 	@OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
-<<<<<<< HEAD
-	private List<Comment> comments;
-=======
 	@OrderBy("id desc")
 	private List<Comment> comments;
-	
-	
->>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 }
 
 
