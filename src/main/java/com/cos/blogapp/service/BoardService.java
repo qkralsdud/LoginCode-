@@ -24,6 +24,7 @@ public class BoardService {
 
 	// 생성자 주입(DI)
 	private final BoardRepository boardRepository;
+<<<<<<< HEAD
 	private final CommentRepository commentRepository;
 
 	//트랜잭션 시작
@@ -40,20 +41,32 @@ public class BoardService {
 
 		commentRepository.save(comment);
 	} // 트랜잭션 종료
+=======
+
+	// 트랜잭션 시작
+	
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 
 	@Transactional(rollbackFor = MyAsyncNotFoundException.class)
 	public void 게시글수정(int id, User principal, BoardSaveReqDto dto) {
 
 		Board boardEntity = boardRepository.findById(id)
+<<<<<<< HEAD
 				.orElseThrow( () ->  new MyAsyncNotFoundException("해당 게시글을 찾을 수 없습니다") );
 
 		if(principal.getId() != boardEntity.getUser().getId()) {
+=======
+				.orElseThrow(() -> new MyAsyncNotFoundException("해당 게시글을 찾을 수 없습니다"));
+
+		if (principal.getId() != boardEntity.getUser().getId()) {
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 			throw new MyAsyncNotFoundException("해당 권한없음");
 		}
 
 		// 영속화된 데이터를 변경하면!!
 		boardEntity.setTitle(dto.getTitle());
 		boardEntity.setContent(dto.getContent());
+<<<<<<< HEAD
 	} // 트랜잭션 종료
 
 	public Board 게시글수정페이지이동(int id) {
@@ -61,34 +74,62 @@ public class BoardService {
 				.orElseThrow(()-> new MyNotFoundException(id + "변호의 게시글을 찾을 수 없습니다."));
 
 		return boardEntity;		
+=======
+	} // 트랜잭션 종료, 더티체킹
+
+	public Board 게시글수정페이지이동(int id) {
+		Board boardEntity = boardRepository.findById(id)
+				.orElseThrow(() -> new MyNotFoundException(id + "변호의 게시글을 찾을 수 없습니다."));
+
+		return boardEntity;
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 	}
 
 	@Transactional(rollbackFor = MyAsyncNotFoundException.class)
 	public void 게시글삭제(int id, User principal) {
 		Board boardEntity = boardRepository.findById(id)
+<<<<<<< HEAD
 				.orElseThrow( () ->  new MyAsyncNotFoundException(id + "를 찾을 수 없습니다") );
 
 		if(principal.getId() != boardEntity.getUser().getId()) {
+=======
+				.orElseThrow(() -> new MyAsyncNotFoundException(id + "를 찾을 수 없습니다"));
+
+		if (principal.getId() != boardEntity.getUser().getId()) {
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 			throw new MyAsyncNotFoundException("해당 권한없음");
 		}
 
 		try {
+<<<<<<< HEAD
 			boardRepository.deleteById(id); // 오류발생(id가 없으면)			
 		} catch (Exception e) {
 			throw new MyAsyncNotFoundException(id+"를 찾을 수 없어서 삭제할 수 없어요.");
+=======
+			boardRepository.deleteById(id); // 오류발생(id가 없으면)
+		} catch (Exception e) {
+			throw new MyAsyncNotFoundException(id + "를 찾을 수 없어서 삭제할 수 없어요.");
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 		}
 	}
 
 	public Board 게시글상세보기(int id) {
+<<<<<<< HEAD
 		Board boardEntity = boardRepository.findById(id)
 				.orElseThrow( () ->  new MyNotFoundException(id + "를 찾을 수 없습니다") );			
 
 		return boardEntity;		
+=======
+		Board boardEntity = boardRepository.findById(id).orElseThrow(() -> new MyNotFoundException(id + "를 찾을 수 없습니다"));
+
+		return boardEntity;
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 	}
 
 	@Transactional(rollbackFor = MyNotFoundException.class)
 	public void 게시글등록(BoardSaveReqDto dto, User principal) {
 
+<<<<<<< HEAD
 		boardRepository.save(dto.toEntity(principal));		
 	}
 
@@ -97,8 +138,20 @@ public class BoardService {
 				Sort.by(Sort.Direction.DESC, "id"));
 		Page<Board> boardsEntity = 
 				boardRepository.findAll(pageRequest);
+=======
+		boardRepository.save(dto.toEntity(principal));
+	}
+
+	public Page<Board> 게시글목록보기(int page) {
+		PageRequest pageRequest = PageRequest.of(page, 3, Sort.by(Sort.Direction.DESC, "id"));
+		Page<Board> boardsEntity = boardRepository.findAll(pageRequest);
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 
 		return boardsEntity;
 	}
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21

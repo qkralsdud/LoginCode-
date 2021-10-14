@@ -49,18 +49,29 @@
 	<hr />
 
 	<div class="card">
+
 		<!-- 댓글쓰기 시작 -->
 		<form action="/board/${boardEntity.id }/comment" method="post">
 			<div class="card-body">
-				<textarea id="reply-content" class="form-control" rows="1"></textarea>
+				<textarea name="content" class="form-control" rows="1"
+					id="ta-content"></textarea>
 			</div>
 			<div class="card-footer">
-				<button type="button" id="btn-reply-save" class="btn btn-primary">등록</button>
+				<button type="submit" id="btn-reply-save" class="btn btn-primary">등록</button>
 			</div>
 		</form>
 		<!-- 댓글쓰기 끝 -->
 	</div>
 	<br />
+
+	<script>
+		$("#ta-content").click(() => {
+			if(globalUserId == "") {
+				alert("로그인을 먼저 진행해주세요!!");
+				location.href = "/loginForm";
+			}
+		});
+	</script>
 
 	<div class="card">
 		<div class="card-header">
@@ -73,14 +84,35 @@
 					class="list-group-item d-flex justify-content-between">
 					<div>${comment.content }</div>
 					<div class="d-flex">
-						<div class="font-italic">작성자 : ${comment.user.username }
+						<div class="font-italic">작성자 : ${comment.user.username}
 							&nbsp;</div>
-						<button class="badge">삭제</button>
+						<button class="badge" id="reply"
+							onClick="deleteById(${comment.id})">삭제</button>
 					</div>
 				</li>
 			</c:forEach>
+
 		</ul>
 
+		<script>
+			async function deleteById(commentId){
+				let response = await fetch("http://localhost:8080/comment/"+commentId, {
+					method:"delete"
+				});
+				
+				let parseResponse = await response.json();
+				
+				if(parseResponse.code == 1){
+					alert("댓글 삭제 성공");
+					//location.reload();
+					$("#reply-"+commentId).remove();
+				}else{
+					alert("댓글 삭제에 실패하였습니다. "+parseResponse.msg);
+				}
+			}
+		</script>
+
+		>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 	</div>
 	<br />
 </div>

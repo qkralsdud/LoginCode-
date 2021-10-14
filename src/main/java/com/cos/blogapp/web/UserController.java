@@ -30,7 +30,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Controller
 public class UserController {	
+<<<<<<< HEAD
 	
+=======
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 	private final UserService userService;
 	private final HttpSession session;
 	
@@ -56,22 +59,34 @@ public class UserController {
 		if(principal.getId() != id) {
 			throw new MyAsyncNotFoundException("회원정보를 수정할 권한이 없습니다");
 		}
+			
+		userService.회원수정(principal, dto);
 		
+<<<<<<< HEAD
 		userService.회원수정(principal, dto);
 		
 		// 핵심로직
 		principal.setEmail(dto.getEmail());
 		session.setAttribute("principal", principal); // 세션 값 변경
 				
+=======
+		// 세션 동기화해주는 부분
+		principal.setEmail(dto.getEmail());
+		session.setAttribute("principal", principal);
+		
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 		return new CMRespDto<>(1, "셩공", null);
 	}
 	
 	@GetMapping("/user/{id}")
 	public String userInfo() {
+<<<<<<< HEAD
 		
 		// 기본은 userRepository.findByid(id) 디비에서 가져와야함.
 		
 		// 편법은 세션값을 가져올 수도 있다
+=======
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 				
 		return "user/updateForm";
 	}
@@ -103,7 +118,11 @@ public class UserController {
 			}
 			return Script.back(errorMap.toString()); 
 		} 
+<<<<<<< HEAD
 		
+=======
+				
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 		User userEntity = userService.로그인(dto);
 		
 		if(userEntity == null) {
@@ -126,6 +145,10 @@ public class UserController {
 			}
 			return Script.back(errorMap.toString());
 		}
+<<<<<<< HEAD
+=======
+		
+>>>>>>> 9156bd20945f4dda9bd3f60237d6b98e10b6cb21
 		userService.회원가입(dto);
 		return Script.href("/loginForm"); // 리다이렉션(300)
 	}
